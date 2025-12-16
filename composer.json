@@ -1,0 +1,34 @@
+{
+  "name": "estaheri/perfectapi",
+  "description": "php library for communicating perfect panel websites using API for clients and AdminAPI for panel owners",
+  "type": "library",
+  "keywords": [
+    "perfect panel",
+    "perfect panel api",
+    "perfect panel library",
+    "perfect panel sdk",
+    "perfect panel php",
+    "perfect panel admin api"
+  ],
+  "homepage": "https://github.com/es-taheri/perfectapi",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Esmaeil Taheri",
+      "email": "ta.es1383@gmail.com",
+      "homepage": "https://github.com/es-taheri",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^7.10.0",
+    "estaheri/json": "^1.1.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "PerfectAPI\\AdminApi\\": "./src/AdminApi",
+      "PerfectAPI\\Api\\": "./src/Api",
+      "PerfectAPI\\": "./"
+    }
+  }
+}
