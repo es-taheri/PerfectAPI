@@ -49,6 +49,7 @@ class AdminApi
                 'base_uri' => $this->apiurl,
                 'headers' => ['Content-Type' => 'application/json', 'X-Api-Key' => $this->apikey],
                 'timeout' => $value,
+                'verify' => false
             ]);
         return null;
     }

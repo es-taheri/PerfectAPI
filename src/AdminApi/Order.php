@@ -41,7 +41,7 @@ class Order extends AdminApi
             else
                 throw new Exception("Invalid update on @$key update");
         endforeach;
-        return $this->request('POST', "orders/update", $updates);
+        return $this->request('POST', "orders/update", ['orders' => $updates]);
     }
 
     public function edit_link(int $id, string $link): Result
