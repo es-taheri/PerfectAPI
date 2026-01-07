@@ -68,6 +68,23 @@ class Api
             return false;
     }
 
+    public function call($action, $params = []): Result
+    {
+        $params['action'] = $action;
+        return $this->request('POST', '', $params);
+    }
+
+    public function concurrent(array $calls): array
+    {
+        $requests = [];
+        foreach ($calls as $a_call):
+            [$action, $params] = $a_call;
+            $params['action'] = $action;
+            $requests[] = ['POST', '', $params];
+        endforeach;
+        return $this->multi_request($requests);
+    }
+
     protected function request($method, $endpoint, $params = []): Result
     {
         $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
