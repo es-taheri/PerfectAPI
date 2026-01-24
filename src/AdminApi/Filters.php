@@ -3,6 +3,7 @@
 namespace PerfectAPI\AdminApi;
 
 use PerfectAPI\AdminApi\Filters\OrderList;
+use PerfectAPI\AdminApi\Filters\UserList;
 
 class Filters
 {
@@ -18,6 +19,11 @@ class Filters
     public static function Order(): OrderList
     {
         return new OrderList();
+    }
+
+    public function User(): UserList
+    {
+        return new UserList();
     }
 
     public static function to_comma(mixed $array): string
