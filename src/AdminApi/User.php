@@ -13,6 +13,6 @@ class User extends AdminApi
     }
     public function list(UserList $filters): Result
     {
-        return $this->request('GET', 'orders', $filters->out());
+        return $this->request('GET', 'users', $filters->out());
     }
 }
