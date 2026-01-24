@@ -21,7 +21,7 @@ class Order extends Api
         return $this->request('POST', '', ['action' => 'status', $ids->multi() ? 'orders' : 'order' => $ids->get()]);
     }
 
-    public function cancel(Api\Filters\OrderStatus $ids): Result
+    public function cancel(Api\Filters\OrderCancel $ids): Result
     {
         return $this->request('POST', '', ['action' => 'cancel', $ids->multi() ? 'orders' : 'order' => $ids->get()]);
     }
