@@ -21,7 +21,7 @@ class Filters
         return new OrderList();
     }
 
-    public function User(): UserList
+    public static function User(): UserList
     {
         return new UserList();
     }
