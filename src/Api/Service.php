@@ -26,7 +26,7 @@ class Service extends Api
             $list = $result->response()->response();
             foreach ($list as $service):
                 if ($multi ? in_array($service->id, $id) : $service->id == $id)
-                    $services[] = $service;
+                    $services[$service->id] = $service;
             endforeach;
             if (!$multi)
                 array_shift($services);
