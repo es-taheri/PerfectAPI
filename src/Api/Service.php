@@ -25,8 +25,8 @@ class Service extends Api
         if ($result->ok() && $result->response()->success()) {
             $list = $result->response()->response();
             foreach ($list as $service):
-                if ($multi ? in_array($service->id, $id) : $service->id == $id)
-                    $services[$service->id] = $service;
+                if ($multi ? in_array($service->service, $id) : $service->service == $id)
+                    $services[$service->service] = $service;
             endforeach;
             if (!$multi)
                 array_shift($services);
