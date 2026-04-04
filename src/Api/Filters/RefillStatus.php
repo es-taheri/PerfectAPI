@@ -2,6 +2,9 @@
 
 namespace PerfectAPI\Api\Filters;
 
+use PerfectAPI\Api\Filters;
+use PerfectAPI\Api\Setters;
+
 class RefillStatus
 
 {
@@ -23,9 +26,9 @@ class RefillStatus
         return is_array($this->ids) ? in_array($ids, $this->ids) : $this->ids == $ids;
     }
 
-    public function get(bool $comma = true): int|array
+    public function get(bool $comma = false): int|array|string
     {
-        return is_array($this->ids);
+        return $comma ? Filters::to_comma($this->ids) : $this->ids;
     }
 
     public function remove(int|array $ids): static

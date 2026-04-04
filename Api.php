@@ -4,9 +4,13 @@ namespace PerfectAPI;
 
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Promise\Utils;
+use JSON\json;
 use PerfectAPI\Api\Result;
 use Psr\Http\Message\ResponseInterface;
 
@@ -89,6 +93,7 @@ class Api
     {
         $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
         $options = [];
+        $params['key'] = $this->apikey;
         if (strtoupper($method) === 'GET')
             $options['query'] = $params;
         else
@@ -98,14 +103,29 @@ class Api
             ->then(
                 function (ResponseInterface $result) {
                     $response = $result->getBody()->getContents();
-                    return new Result(['ok' => true, 'response' => $response]);
+                    return new Result(['ok' => json::_is($response), 'response' => $response]);
                 },
-                function (RequestException $e) {
+                function (ClientException|ServerException $e) {
                     $resp = $e->getResponse();
                     return new Result([
                         'ok' => false,
                         'error' => $e->getMessage(),
-                        @'response' => $resp?->getBody()->getContents()
+                        @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
+                    ]);
+                },
+                function (ConnectException $e) {
+                    return new Result([
+                        'ok' => false,
+                        'error' => $e->getMessage(),
+                        @'response' => null
+                    ]);
+                },
+                function (RequestException|GuzzleException $e) {
+                    $resp = $e->getResponse();
+                    return new Result([
+                        'ok' => false,
+                        'error' => $e->getMessage(),
+                        @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
                     ]);
                 }
             )->wait();
@@ -118,6 +138,7 @@ class Api
             [$httpMethod, $endpoint, $params] = $req;
             $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
             $options = [];
+            $params['key'] = $this->apikey;
             if (strtoupper($httpMethod) === 'GET')
                 $options['query'] = $params;
             else
@@ -125,17 +146,32 @@ class Api
             $promises[] = $this->client
                 ->requestAsync($httpMethod, $url, $options)
                 ->then(
-                    function ($result) {
+                    function (ResponseInterface $result) {
                         $response = $result->getBody()->getContents();
-                        return ['ok' => true, 'response' => $response];
+                        return new Result(['ok' => json::_is($response), 'response' => $response]);
                     },
-                    function (GuzzleException $e) {
+                    function (ClientException|ServerException $e) {
                         $resp = $e->getResponse();
-                        return [
+                        return new Result([
                             'ok' => false,
                             'error' => $e->getMessage(),
-                            @'response' => $resp ? $resp->getBody()->getContents() : null
-                        ];
+                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
+                        ]);
+                    },
+                    function (ConnectException $e) {
+                        return new Result([
+                            'ok' => false,
+                            'error' => $e->getMessage(),
+                            @'response' => null
+                        ]);
+                    },
+                    function (RequestException|GuzzleException $e) {
+                        $resp = $e->getResponse();
+                        return new Result([
+                            'ok' => false,
+                            'error' => $e->getMessage(),
+                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
+                        ]);
                     }
                 );
         }

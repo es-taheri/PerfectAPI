@@ -18,11 +18,11 @@ class Order extends Api
 
     public function status(Api\Filters\OrderStatus $ids): Result
     {
-        return $this->request('POST', '', ['action' => 'status', $ids->multi() ? 'orders' : 'order' => $ids->get()]);
+        return $this->request('POST', '', ['action' => 'status', $ids->multi() ? 'orders' : 'order' => $ids->get(true)]);
     }
 
     public function cancel(Api\Filters\OrderCancel $ids): Result
     {
-        return $this->request('POST', '', ['action' => 'cancel', $ids->multi() ? 'orders' : 'order' => $ids->get()]);
+        return $this->request('POST', '', ['action' => 'cancel', $ids->multi() ? 'orders' : 'order' => $ids->get(true)]);
     }
 }

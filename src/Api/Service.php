@@ -14,7 +14,7 @@ class Service extends Api
 
     public function list(): Result
     {
-        return $this->request('POST', '', array_merge(['action' => 'services']));
+        return $this->request('POST', '', ['action' => 'services']);
     }
 
     public function get(int|array $id): Result

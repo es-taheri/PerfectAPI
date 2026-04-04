@@ -6,7 +6,7 @@ use JSON\json;
 
 class Response
 {
-    private object $response;
+    private object|array $response;
 
     public function __construct(string $response)
     {
