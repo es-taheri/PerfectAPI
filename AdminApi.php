@@ -71,6 +71,21 @@ class AdminApi
             return false;
     }
 
+    public function call($method, $path, array $params = []): Result
+    {
+        return $this->request($method, $path, $params);
+    }
+
+    public function concurrent(array $calls): array
+    {
+        $requests = [];
+        foreach ($calls as $a_call):
+            [$method, $path, $params] = $a_call;
+            $requests[] = [$method, $path, $params];
+        endforeach;
+        return $this->multi_request($requests);
+    }
+
     protected function request($method, $endpoint, $params = []): Result
     {
         $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
@@ -78,7 +93,7 @@ class AdminApi
         if (strtoupper($method) === 'GET')
             $options['query'] = $params;
         else
-            $options['body'] = json::_out($params);
+            $options['body'] = json::_out($params); 
         return $this->client
             ->requestAsync($method, $url, $options)
             ->then(
@@ -86,28 +101,21 @@ class AdminApi
                     $response = $result->getBody()->getContents();
                     return new Result(['ok' => json::_is($response), 'response' => $response]);
                 },
-                function (ClientException|ServerException $e) {
-                    $resp = $e->getResponse();
-                    return new Result([
-                        'ok' => false,
-                        'error' => $e->getMessage(),
-                        @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                    ]);
-                },
-                function (ConnectException $e) {
-                    return new Result([
-                        'ok' => false,
-                        'error' => $e->getMessage(),
-                        @'response' => null
-                    ]);
-                },
-                function (RequestException|GuzzleException $e) {
-                    $resp = $e->getResponse();
-                    return new Result([
-                        'ok' => false,
-                        'error' => $e->getMessage(),
-                        @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                    ]);
+                function (ClientException|ServerException|RequestException|GuzzleException|ConnectException $e) {
+                    if ($e instanceof ConnectException) {
+                        return new Result([
+                            'ok' => false,
+                            'error' => $e->getMessage(),
+                            @'response' => null
+                        ]);
+                    } else {
+                        $resp = $e->getResponse();
+                        return new Result([
+                            'ok' => false,
+                            'error' => $e->getMessage(),
+                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
+                        ]);
+                    }
                 }
             )->wait();
     }
@@ -130,28 +138,21 @@ class AdminApi
                         $response = $result->getBody()->getContents();
                         return ['ok' => json::_is($response), 'response' => $response];
                     },
-                    function (ClientException|ServerException $e) {
-                        $resp = $e->getResponse();
-                        return new Result([
-                            'ok' => false,
-                            'error' => $e->getMessage(),
-                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                        ]);
-                    },
-                    function (ConnectException $e) {
-                        return new Result([
-                            'ok' => false,
-                            'error' => $e->getMessage(),
-                            @'response' => null
-                        ]);
-                    },
-                    function (RequestException|GuzzleException $e) {
-                        $resp = $e->getResponse();
-                        return new Result([
-                            'ok' => false,
-                            'error' => $e->getMessage(),
-                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                        ]);
+                    function (ClientException|ServerException|RequestException|GuzzleException|ConnectException $e) {
+                        if ($e instanceof ConnectException) {
+                            return new Result([
+                                'ok' => false,
+                                'error' => $e->getMessage(),
+                                @'response' => null
+                            ]);
+                        } else {
+                            $resp = $e->getResponse();
+                            return new Result([
+                                'ok' => false,
+                                'error' => $e->getMessage(),
+                                @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
+                            ]);
+                        }
                     }
                 );
         }

@@ -105,28 +105,21 @@ class Api
                     $response = $result->getBody()->getContents();
                     return new Result(['ok' => json::_is($response), 'response' => $response]);
                 },
-                function (ClientException|ServerException $e) {
-                    $resp = $e->getResponse();
-                    return new Result([
-                        'ok' => false,
-                        'error' => $e->getMessage(),
-                        @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                    ]);
-                },
-                function (ConnectException $e) {
-                    return new Result([
-                        'ok' => false,
-                        'error' => $e->getMessage(),
-                        @'response' => null
-                    ]);
-                },
-                function (RequestException|GuzzleException $e) {
-                    $resp = $e->getResponse();
-                    return new Result([
-                        'ok' => false,
-                        'error' => $e->getMessage(),
-                        @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                    ]);
+                function (ClientException|ServerException|RequestException|GuzzleException|ConnectException $e) {
+                    if ($e instanceof ConnectException) {
+                        return new Result([
+                            'ok' => false,
+                            'error' => $e->getMessage(),
+                            @'response' => null
+                        ]);
+                    } else {
+                        $resp = $e->getResponse();
+                        return new Result([
+                            'ok' => false,
+                            'error' => $e->getMessage(),
+                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
+                        ]);
+                    }
                 }
             )->wait();
     }
@@ -150,28 +143,21 @@ class Api
                         $response = $result->getBody()->getContents();
                         return new Result(['ok' => json::_is($response), 'response' => $response]);
                     },
-                    function (ClientException|ServerException $e) {
-                        $resp = $e->getResponse();
-                        return new Result([
-                            'ok' => false,
-                            'error' => $e->getMessage(),
-                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                        ]);
-                    },
-                    function (ConnectException $e) {
-                        return new Result([
-                            'ok' => false,
-                            'error' => $e->getMessage(),
-                            @'response' => null
-                        ]);
-                    },
-                    function (RequestException|GuzzleException $e) {
-                        $resp = $e->getResponse();
-                        return new Result([
-                            'ok' => false,
-                            'error' => $e->getMessage(),
-                            @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
-                        ]);
+                    function (ClientException|ServerException|RequestException|GuzzleException|ConnectException $e) {
+                        if ($e instanceof ConnectException) {
+                            return new Result([
+                                'ok' => false,
+                                'error' => $e->getMessage(),
+                                @'response' => null
+                            ]);
+                        } else {
+                            $resp = $e->getResponse();
+                            return new Result([
+                                'ok' => false,
+                                'error' => $e->getMessage(),
+                                @'response' => is_null($resp) ? null : $resp->getBody()->getContents()
+                            ]);
+                        }
                     }
                 );
         }
