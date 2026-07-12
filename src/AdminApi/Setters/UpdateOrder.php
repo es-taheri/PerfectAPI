@@ -2,6 +2,7 @@
 
 namespace PerfectAPI\AdminApi\Setters;
 
+use AllowDynamicProperties;
 use PerfectAPI\AdminApi\Filters;
 
 /**
@@ -11,6 +12,7 @@ use PerfectAPI\AdminApi\Filters;
  * @method self start_count(int $value)
  * @method self cancel_reason(string $value)
  */
+#[AllowDynamicProperties]
 class UpdateOrder
 {
     public int $id;
@@ -21,41 +23,34 @@ class UpdateOrder
 
     public function __construct(array $params = [])
     {
-        $keys = [
-            'ids',
-            'external_order_ids',
-            'created_from',
-            'created_to',
-            'order_status',
-            'mode',
-            'service_ids',
-            'creation_type',
-            'user',
-            'provider',
-            'ip_address',
-            'link',
-            'offset',
-            'limit',
-            'sort',
-        ];
-        foreach ($keys as $key):
-            if (array_key_exists($key, $params))
-                $this->$key = $params[$key];
+        foreach ($params as $key => $value):
+            $this->$key = $value;
         endforeach;
     }
 
     /**
-     * Remove specific set/s. \
+     * Add specific/custom set/sets.
+     * @return self
+     */
+    public function add($key, $value): self
+    {
+        $this->$key = $value;
+        return $this;
+    }
+
+    /**
+     * Remove specific set/sets. \
      * To remove all sets don't set `$params`.
      * @param array|string $params
      * @return UpdateOrder
      */
     public function remove(array|string $params = []): self
     {
-        if (empty($params))
+        if (empty($params)) {
             return new self();
-        else {
-            foreach ((array)$params as $key):
+        } else {
+            if (is_string($params)) $params = [$params];
+            foreach ($params as $key):
                 unset($this->$key);
             endforeach;
             return $this;
@@ -64,11 +59,9 @@ class UpdateOrder
 
     public function out(): array
     {
-        $keys = ['id', 'status', 'remains', 'start_count', 'cancel_reason'];
+        $props = get_object_vars($this);
         $out = [];
-        foreach ($keys as $key) :
-            if (!isset($this->$key))
-                continue;
+        foreach ($props as $key => $value) :
             $value = $this->$key;
             $value = Filters::to_comma($value);
             $out[$key] = $value;
@@ -82,5 +75,4 @@ class UpdateOrder
         $this->$name = $value;
         return $this;
     }
-
 }

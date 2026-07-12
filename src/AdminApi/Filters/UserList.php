@@ -29,34 +29,36 @@ class UserList
 
     public function __construct(array $params = [])
     {
-        $keys = [
-            'ids',
-            'username',
-            'email',
-            'ip_addresses',
-            'status',
-            'offset',
-            'limit',
-            'sort',
-        ];
-        foreach ($keys as $key):
-            if (array_key_exists($key, $params))
-                $this->$key = $params[$key];
+        foreach ($params as $key => $value):
+            $this->$key = $value;
         endforeach;
     }
 
     /**
-     * Remove specific filter/s. \
-     * To remove all filters don't set `$params`.
+     * Add specific/custom set/sets.
+     * @param $key
+     * @param $value
+     * @return self
+     */
+    public function add($key, $value): self
+    {
+        $this->$key = $value;
+        return $this;
+    }
+
+    /**
+     * Remove specific set/sets. \
+     * To remove all sets don't set `$params`.
      * @param array|string $params
-     * @return UserList
+     * @return self
      */
     public function remove(array|string $params = []): self
     {
-        if (empty($params))
+        if (empty($params)) {
             return new self();
-        else {
-            foreach ((array)$params as $key):
+        } else {
+            if (is_string($params)) $params = [$params];
+            foreach ($params as $key):
                 unset($this->$key);
             endforeach;
             return $this;
@@ -65,20 +67,9 @@ class UserList
 
     public function out(): array
     {
-        $keys = [
-            'ids',
-            'username',
-            'email',
-            'ip_addresses',
-            'status',
-            'offset',
-            'limit',
-            'sort',
-        ];
+        $props = get_object_vars($this);
         $out = [];
-        foreach ($keys as $key) :
-            if (!isset($this->$key))
-                continue;
+        foreach ($props as $key => $value) :
             $value = $this->$key;
             $value = Filters::to_comma($value);
             $out[$key] = $value;
