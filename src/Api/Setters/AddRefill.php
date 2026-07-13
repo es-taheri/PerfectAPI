@@ -6,7 +6,7 @@ use PerfectAPI\Api\Setters;
 
 class AddRefill
 {
-    public function __construct(private int|array|null $ids)
+    public function __construct(private int|array $ids)
     {
     }
 
@@ -36,7 +36,7 @@ class AddRefill
                 unset($this->ids[$id]);
             endforeach;
         } else {
-            $this->ids = null;
+            $this->ids = [];
         }
         return $this;
     }

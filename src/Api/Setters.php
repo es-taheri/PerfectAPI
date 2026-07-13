@@ -12,7 +12,7 @@ class Setters
         return new AddOrder();
     }
 
-    public static function Refill(int|array $ids): AddRefill
+    public static function Refill(int|array $ids=[]): AddRefill
     {
         return new AddRefill($ids);
     }

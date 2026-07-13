@@ -2,6 +2,7 @@
 
 namespace PerfectAPI\AdminApi;
 
+use PerfectAPI\AdminApi\Setters\RejectCancel;
 use PerfectAPI\AdminApi\Setters\UpdateOrder;
 
 class Setters
@@ -9,6 +10,11 @@ class Setters
     public static function Order(): UpdateOrder
     {
         return new UpdateOrder();
+    }
+
+    public static function RejectCancel(int|array $ids=[]): RejectCancel
+    {
+        return new RejectCancel($ids);
     }
 
     public static function to_comma(mixed $array): string

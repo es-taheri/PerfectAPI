@@ -36,7 +36,7 @@ class RejectCancel
                 unset($this->ids[$id]);
             endforeach;
         } else {
-            $this->ids = null;
+            $this->ids = [];
         }
         return $this;
     }
