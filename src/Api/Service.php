@@ -28,8 +28,10 @@ class Service extends Api
                 if ($multi ? in_array($service->service, $id) : $service->service == $id)
                     $services[$service->service] = $service;
             endforeach;
-            if (!$multi)
-                array_shift($services);
+            if (!$multi):
+                $services = array_values($services);
+                $services = array_shift($services);
+            endif;
             return new Result(['ok' => true, 'response' => json::_out($services)]);
         } else {
             return $result;
