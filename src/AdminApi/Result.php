@@ -31,4 +31,19 @@ class Result
     {
         return $this->result['error'];
     }
+    public static function make_ok(array $response = null): Result
+    {
+        return new self(['ok' => true, 'response' => $response]);
+    }
+
+    public static function make_fail(int $code, string $error, array $response = null): Result
+    {
+        return new self(['ok' => false, 'code' => $code, 'error' => $error, 'response' => $response]);
+    }
+
+    public static function make_response(bool $success, array|object|string $obj, string $msg = ''): array
+    {
+        return ['success' => $success, 'obj' => $obj, 'msg' => $msg];
+    }
+
 }
