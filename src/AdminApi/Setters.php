@@ -2,6 +2,7 @@
 
 namespace PerfectAPI\AdminApi;
 
+use PerfectAPI\AdminApi\Setters\RefillTask;
 use PerfectAPI\AdminApi\Setters\RejectCancel;
 use PerfectAPI\AdminApi\Setters\UpdateOrder;
 
@@ -16,7 +17,10 @@ class Setters
     {
         return new RejectCancel($ids);
     }
-
+    public static function RefillTask(): RefillTask
+    {
+        return new RefillTask();
+    }
     public static function to_comma(mixed $array): string
     {
         return (is_array($array)) ? implode(',', $array) : $array;
