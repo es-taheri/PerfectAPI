@@ -31,6 +31,7 @@ class Order extends AdminApi
     }
 
     /**
+     * @param UpdateOrder[] $updates
      * @throws Exception
      */
     public function update(array $updates): Result

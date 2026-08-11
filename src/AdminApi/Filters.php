@@ -13,6 +13,7 @@ class Filters
     public const STATUS_Completed = 'completed';
     public const STATUS_Partial = 'partial';
     public const STATUS_Canceled = 'canceled';
+    public const STATUS_Rejected = 'rejected';
     public const STATUS_Fail = 'fail';
     public const STATUS_Error = 'error';
 
