@@ -88,12 +88,12 @@ class AdminApi
 
     protected function request($method, $endpoint, $params = []): Result
     {
-        $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
+        $url = rtrim(rtrim($this->apiurl, '/') . '/' . $endpoint,'/');
         $options = [];
         if (strtoupper($method) === 'GET')
             $options['query'] = $params;
         else
-            $options['body'] = json::_out($params); 
+            $options['body'] = json::_out($params);
         return $this->client
             ->requestAsync($method, $url, $options)
             ->then(
@@ -125,7 +125,7 @@ class AdminApi
         $promises = [];
         foreach ($requests as $req) {
             [$httpMethod, $endpoint, $params] = $req;
-            $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
+            $url = rtrim(rtrim($this->apiurl, '/') . '/' . $endpoint,'/');
             $options = [];
             if (strtoupper($httpMethod) === 'GET')
                 $options['query'] = $params;

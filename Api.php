@@ -91,7 +91,7 @@ class Api
 
     protected function request($method, $endpoint, $params = []): Result
     {
-        $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
+        $url = rtrim(rtrim($this->apiurl, '/') . '/' . $endpoint,'/');
         $options = [];
         $params['key'] = $this->apikey;
         if (strtoupper($method) === 'GET')
@@ -129,7 +129,7 @@ class Api
         $promises = [];
         foreach ($requests as $req) {
             [$httpMethod, $endpoint, $params] = $req;
-            $url = rtrim($this->apiurl, '/') . '/' . ltrim($endpoint, '/');
+            $url = rtrim(rtrim($this->apiurl, '/') . '/' . $endpoint,'/');
             $options = [];
             $params['key'] = $this->apikey;
             if (strtoupper($httpMethod) === 'GET')
