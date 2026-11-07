@@ -6,6 +6,8 @@ use AllowDynamicProperties;
 use PerfectAPI\AdminApi\Filters;
 
 /**
+ * One refill task of the `POST /refill/change-status` array.
+ *
  * @method self id(int $value)
  * @method self status(string $value)
  */
@@ -14,6 +16,12 @@ class RefillTask
 {
     public int $id;
     public string $status;
+
+    /**
+     * Allowed refill task statuses.
+     */
+    public const STATUS_Completed = 'completed';
+    public const STATUS_Rejected = 'rejected';
 
     public function __construct(array $params = [])
     {
@@ -24,9 +32,11 @@ class RefillTask
 
     /**
      * Add specific/custom set/sets.
+     * @param string $key
+     * @param mixed $value
      * @return self
      */
-    public function add($key, $value): self
+    public function add(string $key, mixed $value): self
     {
         $this->$key = $value;
         return $this;
@@ -36,7 +46,7 @@ class RefillTask
      * Remove specific set/sets. \
      * To remove all sets don't set `$params`.
      * @param array|string $params
-     * @return UpdateOrder
+     * @return self
      */
     public function remove(array|string $params = []): self
     {
@@ -51,13 +61,15 @@ class RefillTask
         }
     }
 
+    /**
+     * Build the refill task body, empty values are skipped.
+     * @return array
+     */
     public function out(): array
     {
-        $props = get_object_vars($this);
         $out = [];
-        foreach ($props as $key => $value) :
-            $value = $this->$key;
-            $value = Filters::to_comma($value);
+        foreach (get_object_vars($this) as $key => $value):
+            if (Filters::is_empty($value)) continue;
             $out[$key] = $value;
         endforeach;
         return $out;

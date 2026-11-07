@@ -2,9 +2,12 @@
 
 namespace PerfectAPI\AdminApi\Filters;
 
+use AllowDynamicProperties;
 use PerfectAPI\AdminApi\Filters;
 
 /**
+ * Filters of the `GET /users` endpoint.
+ *
  * @method self ids(int|array $value)
  * @method self username(string $value)
  * @method self email(string $value)
@@ -14,6 +17,7 @@ use PerfectAPI\AdminApi\Filters;
  * @method self limit(int $value)
  * @method self sort(string $value)
  */
+#[AllowDynamicProperties]
 class UserList
 {
     public int|array $ids;
@@ -36,11 +40,11 @@ class UserList
 
     /**
      * Add specific/custom set/sets.
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      * @return self
      */
-    public function add($key, $value): self
+    public function add(string $key, mixed $value): self
     {
         $this->$key = $value;
         return $this;
@@ -65,14 +69,16 @@ class UserList
         }
     }
 
+    /**
+     * Build the query parameters, empty filters are skipped.
+     * @return array
+     */
     public function out(): array
     {
-        $props = get_object_vars($this);
         $out = [];
-        foreach ($props as $key => $value) :
-            $value = $this->$key;
-            $value = Filters::to_comma($value);
-            $out[$key] = $value;
+        foreach (get_object_vars($this) as $key => $value):
+            if (Filters::is_empty($value)) continue;
+            $out[$key] = Filters::to_query($value);
         endforeach;
         return $out;
     }

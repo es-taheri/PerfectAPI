@@ -2,10 +2,13 @@
 
 namespace PerfectAPI\Api;
 
-use PerfectAPI\Api\Filters\OrderStatus;
 use PerfectAPI\Api\Filters\OrderCancel;
+use PerfectAPI\Api\Filters\OrderStatus;
 use PerfectAPI\Api\Filters\RefillStatus;
 
+/**
+ * Factories for the api id bags, status constants and the comma separated helper.
+ */
 class Filters
 {
     public const STATUS_Pending = 'Pending';
@@ -19,6 +22,7 @@ class Filters
     public const STATUS_Error = 'Error';
     public const STATUS_Fail = 'Fail';
     public const STATUS_Rejected = 'Rejected';
+
     public static function Status(int|array $ids): OrderStatus
     {
         return new OrderStatus($ids);
@@ -34,8 +38,15 @@ class Filters
         return new RefillStatus($ids);
     }
 
-    public static function to_comma(mixed $array): string
+    /**
+     * Convert an id/value or an array of them to the api's comma separated format.
+     * @param mixed $value
+     * @return string
+     */
+    public static function to_comma(mixed $value): string
     {
-        return (is_array($array)) ? implode(',', $array) : $array;
+        if (is_array($value))
+            return implode(',', $value);
+        return is_null($value) ? '' : (string)$value;
     }
 }

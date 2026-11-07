@@ -5,6 +5,9 @@ namespace PerfectAPI\Api;
 use PerfectAPI\Api\Setters\AddOrder;
 use PerfectAPI\Api\Setters\AddRefill;
 
+/**
+ * Factories for the api request bodies.
+ */
 class Setters
 {
     public static function Order(): AddOrder
@@ -12,14 +15,13 @@ class Setters
         return new AddOrder();
     }
 
-    public static function Refill(int|array $ids=[]): AddRefill
+    public static function Refill(int|array|null $ids = null): AddRefill
     {
         return new AddRefill($ids);
     }
 
     public static function to_comma(mixed $array): string
     {
-        return (is_array($array)) ? implode(',', $array) : $array;
+        return Filters::to_comma($array);
     }
-
 }

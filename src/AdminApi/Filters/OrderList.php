@@ -6,6 +6,8 @@ use AllowDynamicProperties;
 use PerfectAPI\AdminApi\Filters;
 
 /**
+ * Filters of the `GET /orders` endpoint.
+ *
  * @method self ids(int|array $value)
  * @method self external_order_ids(int|array $value)
  * @method self created_from(int $value)
@@ -21,6 +23,7 @@ use PerfectAPI\AdminApi\Filters;
  * @method self offset(int $value)
  * @method self limit(int $value)
  * @method self sort(string $value)
+ * @method self include(string|array $value)
  */
 #[AllowDynamicProperties]
 class OrderList
@@ -55,6 +58,8 @@ class OrderList
 
     public string $sort;
 
+    public string|array $include;
+
     public function __construct(array $params = [])
     {
         foreach ($params as $key => $value):
@@ -64,11 +69,11 @@ class OrderList
 
     /**
      * Add specific/custom set/sets.
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      * @return self
      */
-    public function add($key, $value): self
+    public function add(string $key, mixed $value): self
     {
         $this->$key = $value;
         return $this;
@@ -93,14 +98,16 @@ class OrderList
         }
     }
 
+    /**
+     * Build the query parameters, empty filters are skipped.
+     * @return array
+     */
     public function out(): array
     {
-        $props = get_object_vars($this);
         $out = [];
-        foreach ($props as $key => $value) :
-            $value = $this->$key;
-            $value = Filters::to_comma($value);
-            $out[$key] = $value;
+        foreach (get_object_vars($this) as $key => $value):
+            if (Filters::is_empty($value)) continue;
+            $out[$key] = Filters::to_query($value);
         endforeach;
         return $out;
     }

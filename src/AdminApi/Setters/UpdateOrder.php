@@ -6,6 +6,8 @@ use AllowDynamicProperties;
 use PerfectAPI\AdminApi\Filters;
 
 /**
+ * One order of the `POST /orders/update` array.
+ *
  * @method self id(int $value)
  * @method self status(string $value)
  * @method self remains(int $value)
@@ -30,9 +32,11 @@ class UpdateOrder
 
     /**
      * Add specific/custom set/sets.
+     * @param string $key
+     * @param mixed $value
      * @return self
      */
-    public function add($key, $value): self
+    public function add(string $key, mixed $value): self
     {
         $this->$key = $value;
         return $this;
@@ -42,7 +46,7 @@ class UpdateOrder
      * Remove specific set/sets. \
      * To remove all sets don't set `$params`.
      * @param array|string $params
-     * @return UpdateOrder
+     * @return self
      */
     public function remove(array|string $params = []): self
     {
@@ -57,13 +61,15 @@ class UpdateOrder
         }
     }
 
+    /**
+     * Build the order update body, empty values are skipped.
+     * @return array
+     */
     public function out(): array
     {
-        $props = get_object_vars($this);
         $out = [];
-        foreach ($props as $key => $value) :
-            $value = $this->$key;
-            $value = Filters::to_comma($value);
+        foreach (get_object_vars($this) as $key => $value):
+            if (Filters::is_empty($value)) continue;
             $out[$key] = $value;
         endforeach;
         return $out;
